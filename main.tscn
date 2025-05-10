@@ -1,0 +1,120 @@
+[gd_scene load_steps=4 format=3 uid="uid://vywc4nki63f7"]
+
+[ext_resource type="Script" uid="uid://6jarapewd512" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://bpgfqem2w7bhw" path="res://icon.svg" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://b4v6uoirhvfve" path="res://canvas.gd" id="3_h2yge"]
+
+[node name="Main" type="BoxContainer"]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+vertical = true
+script = ExtResource("1_0xm2m")
+
+[node name="BC_top" type="BoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="BC_top"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BC_middle" type="BoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 10.0
+
+[node name="BC_left" type="BoxContainer" parent="BC_middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="BC_middle/BC_left"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BC_center" type="BoxContainer" parent="BC_middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="Background" type="TextureRect" parent="BC_middle/BC_center"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 2
+size_flags_horizontal = 6
+texture = ExtResource("1_ig7tw")
+stretch_mode = 3
+
+[node name="Canvas" type="TextureRect" parent="BC_middle/BC_center/Background"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -266.5
+offset_top = -266.5
+offset_right = 266.5
+offset_bottom = 266.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+stretch_mode = 3
+script = ExtResource("3_h2yge")
+
+[node name="BC_right" type="BoxContainer" parent="BC_middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical = true
+
+[node name="P_tools" type="Panel" parent="BC_middle/BC_right"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BC" type="BoxContainer" parent="BC_middle/BC_right/P_tools"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="btnClear" type="Button" parent="BC_middle/BC_right/P_tools/BC"]
+layout_mode = 2
+text = "CLEAR"
+
+[node name="btnBrush" type="Button" parent="BC_middle/BC_right/P_tools/BC"]
+layout_mode = 2
+text = "Brush"
+
+[node name="P_inspector" type="Panel" parent="BC_middle/BC_right"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BC_bottom" type="BoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="P" type="Panel" parent="BC_bottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BC" type="BoxContainer" parent="BC_bottom/P"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="lblStatus" type="Label" parent="BC_bottom/P/BC"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Status"
+
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/BC/btnClear" to="." method="_on_btn_clear_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/BC/btnBrush" to="." method="_on_btn_brush_pressed"]

@@ -24,6 +24,7 @@ func placedot(pos):
 
 func placeline(prev_pos, pos):
 	context.canvas.brush_radius = Vector2i(1,1);
+	context.canvas.brush_color = context.cur_color;
 	context.canvas.line.append(prev_pos);
 	context.canvas.line.append(pos);
 	context.canvas.draw_line.call();

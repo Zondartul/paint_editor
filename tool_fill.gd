@@ -78,6 +78,7 @@ const CODE_DENY = 3;
 
 func mask_set(pos, code):  Mask[mask_padded_width*(pos.y+mask_pad) + (pos.x+mask_pad)] = code;
 func mask_get(pos): return Mask[mask_padded_width*(pos.y+mask_pad) + (pos.x+mask_pad)];
+func mask_set_nopad(pos, code): Mask[mask_padded_width*pos.y + pos.x] = code;
 
 func generate_mask():
 	mask_inner_width = context.canvas.canvas_image.get_width();
@@ -88,11 +89,11 @@ func generate_mask():
 	Mask.fill(CODE_BLANK);
 	
 	##fill mask pad
-	for y in range(-mask_pad, mask_inner_height+mask_pad):
-		for x in range(-mask_pad, mask_inner_width+mask_pad):
-			if(x < mask_pad) or (x> mask_pad+mask_inner_width)\
-			or(y < mask_pad) or (y> mask_pad+mask_inner_height):
-				mask_set(Vector2i(x,y), CODE_DENY);
+	for y in range(0, mask_padded_height):
+		for x in range(0, mask_padded_width):
+			if(x < mask_pad) or (x>= mask_padded_width-mask_pad)\
+			or(y < mask_pad) or (y>= mask_padded_height-mask_pad):
+				mask_set_nopad(Vector2i(x,y), CODE_DENY);
 
 func fill_init():
 	clear_sets();
@@ -119,8 +120,9 @@ func fill(pos, col):
 	fill_init();
 	pos = Vector2i(pos);
 	initial_color = read_pixel(pos);
-	admit_set.append(pos);
-	add_neighbors(pos);
+	open_set.append(pos);
+	#admit_set.append(pos);
+	#add_neighbors(pos);
 	while not open_set.is_empty():
 		#print_stats();
 		var prev_open_set = open_set.duplicate();

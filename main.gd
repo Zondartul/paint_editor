@@ -87,3 +87,14 @@ func canvas_mmb_up(pos): if tool: tool.mmb_up(pos);
 func canvas_mouse_move(pos): if tool: tool.mouseMove(pos);
 func canvas_mouse_enter(): pass
 func canvas_mouse_exit(): pass
+
+
+func _on_color_picker_color_changed(color: Color) -> void:
+	ctx.cur_color = color;
+	$BC_middle/BC_right/P_color/BC/BoxContainer/btnColorPicker.color = color;
+	$BC_middle/BC_right/P_color/BC/C/ColorPicker.color = color;
+
+func _on_btn_color_picker_color_changed(color: Color) -> void:
+	ctx.cur_color = color;
+	$BC_middle/BC_right/P_color/BC/BoxContainer/btnColorPicker.color = color;
+	$BC_middle/BC_right/P_color/BC/C/ColorPicker.color = color;

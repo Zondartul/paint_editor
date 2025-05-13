@@ -1,11 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://vywc4nki63f7"]
+[gd_scene load_steps=3 format=3 uid="uid://vywc4nki63f7"]
 
 [ext_resource type="Script" uid="uid://6jarapewd512" path="res://main.gd" id="1_0xm2m"]
-[ext_resource type="Texture2D" uid="uid://bpgfqem2w7bhw" path="res://icon.svg" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://b4v6uoirhvfve" path="res://canvas.gd" id="3_h2yge"]
 
 [node name="Main" type="BoxContainer"]
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -31,22 +30,73 @@ size_flags_stretch_ratio = 10.0
 [node name="BC_left" type="BoxContainer" parent="BC_middle"]
 layout_mode = 2
 size_flags_horizontal = 3
+vertical = true
 
-[node name="Panel" type="Panel" parent="BC_middle/BC_left"]
+[node name="P_files" type="Panel" parent="BC_middle/BC_left"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BC" type="BoxContainer" parent="BC_middle/BC_left/P_files"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="Label" type="Label" parent="BC_middle/BC_left/P_files/BC"]
+layout_mode = 2
+text = "Files"
+
+[node name="P_actions" type="Panel" parent="BC_middle/BC_left"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BC" type="BoxContainer" parent="BC_middle/BC_left/P_actions"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="Label" type="Label" parent="BC_middle/BC_left/P_actions/BC"]
+layout_mode = 2
+text = "Actions"
+
+[node name="P_layers" type="Panel" parent="BC_middle/BC_left"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BC" type="BoxContainer" parent="BC_middle/BC_left/P_layers"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="Label" type="Label" parent="BC_middle/BC_left/P_layers/BC"]
+layout_mode = 2
+text = "Layers"
 
 [node name="BC_center" type="BoxContainer" parent="BC_middle"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
+alignment = 1
 
-[node name="Background" type="TextureRect" parent="BC_middle/BC_center"]
+[node name="Background" type="ColorRect" parent="BC_middle/BC_center"]
 custom_minimum_size = Vector2(512, 512)
 layout_mode = 2
-size_flags_horizontal = 6
-texture = ExtResource("1_ig7tw")
-stretch_mode = 3
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="Canvas" type="TextureRect" parent="BC_middle/BC_center/Background"]
 layout_mode = 1
@@ -55,15 +105,16 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -266.5
-offset_top = -266.5
-offset_right = 266.5
-offset_bottom = 266.5
+offset_left = -256.0
+offset_top = -256.0
+offset_right = 256.0
+offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
 stretch_mode = 3
 script = ExtResource("3_h2yge")
+padding = 0
 
 [node name="BC_right" type="BoxContainer" parent="BC_middle"]
 layout_mode = 2
@@ -74,7 +125,59 @@ vertical = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BC" type="BoxContainer" parent="BC_middle/BC_right/P_tools"]
+[node name="GC" type="GridContainer" parent="BC_middle/BC_right/P_tools"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+
+[node name="Label" type="Label" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Tools"
+
+[node name="Control" type="Control" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+
+[node name="btnClear" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "CLEAR"
+
+[node name="btnBrush" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Brush"
+
+[node name="btnPixel" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Pixel"
+
+[node name="btnFill" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Fill"
+
+[node name="btnErase" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Eraser"
+
+[node name="btnSelBox" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Box Select"
+
+[node name="btnSelWand" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Wand Select"
+
+[node name="btnLine" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
+layout_mode = 2
+text = "Line"
+
+[node name="P_inspector" type="Panel" parent="BC_middle/BC_right"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BC" type="BoxContainer" parent="BC_middle/BC_right/P_inspector"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,17 +186,57 @@ grow_horizontal = 2
 grow_vertical = 2
 vertical = true
 
-[node name="btnClear" type="Button" parent="BC_middle/BC_right/P_tools/BC"]
+[node name="Label" type="Label" parent="BC_middle/BC_right/P_inspector/BC"]
 layout_mode = 2
-text = "CLEAR"
+text = "Tool settings"
 
-[node name="btnBrush" type="Button" parent="BC_middle/BC_right/P_tools/BC"]
-layout_mode = 2
-text = "Brush"
-
-[node name="P_inspector" type="Panel" parent="BC_middle/BC_right"]
+[node name="P_color" type="Panel" parent="BC_middle/BC_right"]
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="BC" type="BoxContainer" parent="BC_middle/BC_right/P_color"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="BoxContainer" type="BoxContainer" parent="BC_middle/BC_right/P_color/BC"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BC_middle/BC_right/P_color/BC/BoxContainer"]
+layout_mode = 2
+text = "Color"
+
+[node name="btnColorPicker" type="ColorPickerButton" parent="BC_middle/BC_right/P_color/BC/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="C" type="Control" parent="BC_middle/BC_right/P_color/BC"]
+custom_minimum_size = Vector2(150, 140)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorPicker" type="ColorPicker" parent="BC_middle/BC_right/P_color/BC/C"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 148.0
+offset_bottom = 124.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+picker_shape = 2
+sampler_visible = false
+color_modes_visible = false
+sliders_visible = false
+hex_visible = false
+presets_visible = false
 
 [node name="BC_bottom" type="BoxContainer" parent="."]
 layout_mode = 2
@@ -116,5 +259,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Status"
 
-[connection signal="pressed" from="BC_middle/BC_right/P_tools/BC/btnClear" to="." method="_on_btn_clear_pressed"]
-[connection signal="pressed" from="BC_middle/BC_right/P_tools/BC/btnBrush" to="." method="_on_btn_brush_pressed"]
+[connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_gui_input"]
+[connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_entered"]
+[connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_exited"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnClear" to="." method="_on_btn_clear_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnBrush" to="." method="_on_btn_brush_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnPixel" to="." method="_on_btn_pixel_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnFill" to="." method="_on_btn_fill_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnErase" to="." method="_on_btn_erase_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnSelBox" to="." method="_on_btn_sel_box_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnSelWand" to="." method="_on_btn_sel_wand_pressed"]
+[connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnLine" to="." method="_on_btn_line_pressed"]

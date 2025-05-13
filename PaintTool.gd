@@ -11,3 +11,4 @@ func rmb_up(_pos):pass;
 func mmb_up(_pos):pass;
 func mouseMove(_pos):pass;
 func think():pass;
+func restart():pass;

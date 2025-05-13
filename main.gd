@@ -35,7 +35,7 @@ func clear_image():
 
 func set_tool(tool_name):
 	if tool_name == "pixel":	tool = Tool_Pixel.new(ctx);
-	if tool_name == "fill":		tool = Tool_Fill.new(ctx);
+	elif tool_name == "fill":		tool = Tool_Fill.new(ctx);
 	else:
 		print("unknown tool ["+tool_name+"]")
 		return;
@@ -87,7 +87,7 @@ func canvas_mmb_up(pos): if tool: tool.mmb_up(pos);
 func canvas_mouse_move(pos): if tool: tool.mouseMove(pos);
 func canvas_mouse_enter(): pass
 func canvas_mouse_exit(): pass
-
+func canvas_restart(): if tool: tool.restart();
 
 func _on_color_picker_color_changed(color: Color) -> void:
 	ctx.cur_color = color;
@@ -98,3 +98,46 @@ func _on_btn_color_picker_color_changed(color: Color) -> void:
 	ctx.cur_color = color;
 	$BC_middle/BC_right/P_color/BC/BoxContainer/btnColorPicker.color = color;
 	$BC_middle/BC_right/P_color/BC/C/ColorPicker.color = color;
+
+
+func _on_file_index_pressed(index: int) -> void:
+	if index == 0: # New...
+		print("New file")
+		$pop_new_file.show();
+	if index == 1: # Open...
+		print("Open file")
+	if index == 2: # Save
+		print("Save file")
+	if index == 3: # Save As
+		print("Save As")
+
+
+func _on_edit_index_pressed(index: int) -> void:
+	if index == 0: #Undo
+		print("Undo")
+	if index == 1: #Redo
+		print("Redo")
+	if index == 2: #Canvas size
+		print("Canvas size")
+
+func resize_canvas(new_size):
+	$BC_middle/BC_center/Background.custom_minimum_size = new_size;
+	$BC_middle/BC_center/Background.size = new_size;
+	ctx.canvas.picture_size = new_size;
+	ctx.canvas.custom_minimum_size = new_size;
+	ctx.canvas.clear();
+	ctx.canvas.size = new_size;
+	ctx.canvas.position = Vector2i(0,0);
+	canvas_restart();
+	
+func new_file(settings):
+	resize_canvas(settings.size);
+
+func _on_pop_new_file_btn_accept_pressed() -> void:
+	var new_size = Vector2i(
+		$pop_new_file/BC/BC/sb_canvas_x.value,
+		$pop_new_file/BC/BC/sb_canvas_y.value)
+	new_file({"size":new_size})
+
+func _on_pop_new_file_btn_cancel_pressed() -> void:
+	pass # Replace with function body.

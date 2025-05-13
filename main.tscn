@@ -22,6 +22,42 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="BC" type="BoxContainer" parent="BC_top/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="MenuBar" type="MenuBar" parent="BC_top/Panel/BC"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="File" type="PopupMenu" parent="BC_top/Panel/BC/MenuBar"]
+item_count = 4
+item_0/text = "New..."
+item_0/id = 0
+item_1/text = "Open..."
+item_1/id = 1
+item_2/text = "Save"
+item_2/id = 2
+item_3/text = "Save As..."
+item_3/id = 3
+
+[node name="Edit" type="PopupMenu" parent="BC_top/Panel/BC/MenuBar"]
+auto_translate_mode = 1
+item_count = 3
+item_0/text = "Undo"
+item_0/id = 0
+item_0/disabled = true
+item_1/text = "Redo"
+item_1/id = 1
+item_1/disabled = true
+item_2/text = "Canvas size..."
+item_2/id = 2
+
 [node name="BC_middle" type="BoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
@@ -147,6 +183,7 @@ text = "CLEAR"
 
 [node name="btnBrush" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
+disabled = true
 text = "Brush"
 
 [node name="btnPixel" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
@@ -159,18 +196,22 @@ text = "Fill"
 
 [node name="btnErase" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
+disabled = true
 text = "Eraser"
 
 [node name="btnSelBox" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
+disabled = true
 text = "Box Select"
 
 [node name="btnSelWand" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
+disabled = true
 text = "Wand Select"
 
 [node name="btnLine" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
+disabled = true
 text = "Line"
 
 [node name="P_inspector" type="Panel" parent="BC_middle/BC_right"]
@@ -259,6 +300,71 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Status"
 
+[node name="pop_new_file" type="Popup" parent="."]
+title = "New File"
+initial_position = 2
+size = Vector2i(203, 141)
+borderless = false
+
+[node name="BC" type="BoxContainer" parent="pop_new_file"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="Control" type="Control" parent="pop_new_file/BC"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label2" type="Label" parent="pop_new_file/BC"]
+layout_mode = 2
+text = "Canvas size:"
+
+[node name="BC" type="BoxContainer" parent="pop_new_file/BC"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="pop_new_file/BC/BC"]
+layout_mode = 2
+text = "X"
+
+[node name="sb_canvas_x" type="SpinBox" parent="pop_new_file/BC/BC"]
+layout_mode = 2
+max_value = 1.0
+rounded = true
+allow_greater = true
+
+[node name="Label2" type="Label" parent="pop_new_file/BC/BC"]
+layout_mode = 2
+text = "y"
+
+[node name="sb_canvas_y" type="SpinBox" parent="pop_new_file/BC/BC"]
+layout_mode = 2
+max_value = 1.0
+rounded = true
+allow_greater = true
+
+[node name="Control2" type="Control" parent="pop_new_file/BC"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BC2" type="BoxContainer" parent="pop_new_file/BC"]
+layout_mode = 2
+alignment = 1
+
+[node name="btnAccept" type="Button" parent="pop_new_file/BC/BC2"]
+layout_mode = 2
+text = "Accept"
+
+[node name="btnCancel" type="Button" parent="pop_new_file/BC/BC2"]
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
+[connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
 [connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_gui_input"]
 [connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_entered"]
 [connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_exited"]
@@ -272,3 +378,7 @@ text = "Status"
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnLine" to="." method="_on_btn_line_pressed"]
 [connection signal="color_changed" from="BC_middle/BC_right/P_color/BC/BoxContainer/btnColorPicker" to="." method="_on_btn_color_picker_color_changed"]
 [connection signal="color_changed" from="BC_middle/BC_right/P_color/BC/C/ColorPicker" to="." method="_on_color_picker_color_changed"]
+[connection signal="pressed" from="pop_new_file/BC/BC2/btnAccept" to="." method="_on_pop_new_file_btn_accept_pressed"]
+[connection signal="pressed" from="pop_new_file/BC/BC2/btnAccept" to="pop_new_file" method="hide"]
+[connection signal="pressed" from="pop_new_file/BC/BC2/btnCancel" to="." method="_on_pop_new_file_btn_cancel_pressed"]
+[connection signal="pressed" from="pop_new_file/BC/BC2/btnCancel" to="pop_new_file" method="hide"]

@@ -9,12 +9,15 @@ var context:PaintContext;
 
 var premade_mask = null;
 
-func _init(new_ctx:PaintContext):
-	context = new_ctx;
-	
+func restart():
 	generate_mask();
 	premade_mask = Mask;
 	Mask = Mask.duplicate();
+	
+
+func _init(new_ctx:PaintContext):
+	context = new_ctx;
+	restart();
 	
 
 func lmb_down(pos): 

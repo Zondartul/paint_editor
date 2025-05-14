@@ -335,6 +335,7 @@ layout_mode = 2
 max_value = 1.0
 rounded = true
 allow_greater = true
+select_all_on_focus = true
 
 [node name="Label2" type="Label" parent="pop_new_file/BC/BC"]
 layout_mode = 2
@@ -345,6 +346,7 @@ layout_mode = 2
 max_value = 1.0
 rounded = true
 allow_greater = true
+select_all_on_focus = true
 
 [node name="Control2" type="Control" parent="pop_new_file/BC"]
 custom_minimum_size = Vector2(0, 20)
@@ -362,6 +364,21 @@ text = "Accept"
 [node name="btnCancel" type="Button" parent="pop_new_file/BC/BC2"]
 layout_mode = 2
 text = "Cancel"
+
+[node name="fd_save_as" type="FileDialog" parent="."]
+title = "Save As..."
+initial_position = 2
+access = 2
+filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg")
+
+[node name="fd_open" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open..."
+initial_position = 2
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg")
 
 [connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
 [connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
@@ -382,3 +399,5 @@ text = "Cancel"
 [connection signal="pressed" from="pop_new_file/BC/BC2/btnAccept" to="pop_new_file" method="hide"]
 [connection signal="pressed" from="pop_new_file/BC/BC2/btnCancel" to="." method="_on_pop_new_file_btn_cancel_pressed"]
 [connection signal="pressed" from="pop_new_file/BC/BC2/btnCancel" to="pop_new_file" method="hide"]
+[connection signal="file_selected" from="fd_save_as" to="." method="_on_fd_save_as_file_selected"]
+[connection signal="file_selected" from="fd_open" to="." method="_on_fd_open_file_selected"]

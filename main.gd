@@ -11,9 +11,12 @@ var tool:PaintTool = null;
 @onready var lbl_status:Label = $BC_bottom/P/BC/lblStatus
 var ctx:PaintContext;
 
+var cur_file_path:String
+
 func _ready():
 	ctx = PaintContext.new();
 	ctx.canvas = n_img;
+	apply_fix_sb_enter_means_next();
 	print("hi")
 
 func _process(delta:float)->void:
@@ -106,10 +109,16 @@ func _on_file_index_pressed(index: int) -> void:
 		$pop_new_file.show();
 	if index == 1: # Open...
 		print("Open file")
+		$fd_open.show();
 	if index == 2: # Save
 		print("Save file")
+		if(cur_file_path == ""):
+			$fd_save_as.show();
+		else:
+			SaveFile(cur_file_path);
 	if index == 3: # Save As
 		print("Save As")
+		$fd_save_as.show();
 
 
 func _on_edit_index_pressed(index: int) -> void:
@@ -121,15 +130,20 @@ func _on_edit_index_pressed(index: int) -> void:
 		print("Canvas size")
 
 func resize_canvas(new_size):
+	resize_canvas_nodes(new_size); 
+	ctx.canvas.clear();
+	canvas_restart();
+	resize_canvas_nodes(new_size); # too many side effects, got to fix it again!
+
+func resize_canvas_nodes(new_size):
 	$BC_middle/BC_center/Background.custom_minimum_size = new_size;
 	$BC_middle/BC_center/Background.size = new_size;
 	ctx.canvas.picture_size = new_size;
 	ctx.canvas.custom_minimum_size = new_size;
-	ctx.canvas.clear();
 	ctx.canvas.size = new_size;
 	ctx.canvas.position = Vector2i(0,0);
-	canvas_restart();
-	
+
+
 func new_file(settings):
 	resize_canvas(settings.size);
 
@@ -138,6 +152,40 @@ func _on_pop_new_file_btn_accept_pressed() -> void:
 		$pop_new_file/BC/BC/sb_canvas_x.value,
 		$pop_new_file/BC/BC/sb_canvas_y.value)
 	new_file({"size":new_size})
+	cur_file_path = "";
 
 func _on_pop_new_file_btn_cancel_pressed() -> void:
 	pass # Replace with function body.
+
+func _on_fd_save_as_file_selected(path: String) -> void:
+	cur_file_path = path;
+	SaveFile(path);
+
+func SaveFile(path:String):
+	ctx.canvas.canvas_image.save_png(path);
+	print("saved file as ["+path+"]");
+
+
+func _on_fd_open_file_selected(path: String) -> void:
+	cur_file_path = path;
+	OpenFile(path);
+
+func OpenFile(path:String):
+	ctx.canvas.canvas_image.load(path);
+	var size = ctx.canvas.canvas_image.get_size();
+	ctx.canvas.picture_size = size;
+	ctx.canvas.update_canvas.call();
+	resize_canvas_nodes(size);
+	print("loaded file ["+path+"]")
+
+func apply_fix_sb_enter_means_next():
+	var arr_sbs = [$pop_new_file/BC/BC/sb_canvas_x, $pop_new_file/BC/BC/sb_canvas_y];
+	for sb in arr_sbs:
+		var le:LineEdit = sb.get_line_edit();
+		le.text_submitted.connect(_on_sb_enter_pressed);
+
+func _on_sb_enter_pressed(_text):
+	var event_press_tab = InputEventAction.new();
+	event_press_tab.action = "ui_focus_next"
+	event_press_tab.pressed = true
+	Input.parse_input_event(event_press_tab);

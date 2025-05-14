@@ -10,6 +10,7 @@ const script_tool_fill = preload("tool_fill.gd")
 var tool:PaintTool = null;
 @onready var n_img:PaintCanvas = $BC_middle/BC_center/Background/Canvas
 @onready var lbl_status:Label = $BC_bottom/P/BC/lblStatus
+@onready var n_undo_list:ItemList = $BC_middle/BC_left/P_actions/BC/undo_list
 var ctx:PaintContext;
 
 var cur_file_path:String
@@ -37,6 +38,7 @@ func get_cur_tool_str():
 
 func clear_image():
 	n_img.clear();
+	ctx.undo_manager.clear();
 	print("image cleared")
 
 func set_tool(tool_name):
@@ -151,6 +153,7 @@ func resize_canvas_nodes(new_size):
 
 func new_file(settings):
 	resize_canvas(settings.size);
+	ctx.undo_manager.clear();
 
 func _on_pop_new_file_btn_accept_pressed() -> void:
 	var new_size = Vector2i(
@@ -181,6 +184,7 @@ func OpenFile(path:String):
 	ctx.canvas.picture_size = size;
 	ctx.canvas.update_canvas.call();
 	resize_canvas_nodes(size);
+	ctx.undo_manager.clear();
 	print("loaded file ["+path+"]")
 
 func apply_fix_sb_enter_means_next():
@@ -197,7 +201,8 @@ func _on_sb_enter_pressed(_text):
 
 func _on_UndoManager_stack_changed(stack:Array, head:int):
 	print("Stack changed:");
-	print_undo_manager_stack(stack, head);
+	#print_undo_manager_stack(stack, head);
+	populate_undo_list(stack, head);
 
 func print_undo_manager_stack(stack:Array, head:int):
 	for i in range(0, stack.size()):
@@ -210,3 +215,25 @@ func print_undo_manager_stack(stack:Array, head:int):
 		print(str(i)+"    : ...");
 	if(head >= stack.size()):
 		print("--> "+str(head)+": ...");
+
+func populate_undo_list(stack, head):
+	n_undo_list.clear()
+	for item in stack:
+		n_undo_list.add_item(item.name);
+	if(head == -1):
+		n_undo_list.deselect_all()
+	else:
+		n_undo_list.select(head);
+
+
+func _on_undo_list_item_selected(index: int) -> void:
+	ctx.undo_manager.jump_to(index);
+
+func _input(event:InputEvent)->void:
+	if event.is_action("ui_undo", true) and event.is_pressed():
+		ctx.undo_manager.undo();
+		get_viewport().set_input_as_handled();
+	if event.is_action("ui_redo", true) and event.is_pressed():
+		ctx.undo_manager.redo();
+		get_viewport().set_input_as_handled();
+		

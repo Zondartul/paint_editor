@@ -9,11 +9,14 @@ func _init(new_ctx:PaintContext):
 	context = new_ctx;
 
 func lmb_down(pos):	
-	context.undo_manager.checkpoint("Pixel tool");
+	context.undo_manager.action_begin("Pixel tool");
 	prev_pos = pos; 
 	placedot(pos); 
 	is_lmb_down = true;
-func lmb_up(pos):   is_lmb_down = false;
+	
+func lmb_up(pos):   
+	is_lmb_down = false;
+	context.undo_manager.action_end();
 
 func mouseMove(pos):
 	if is_lmb_down:

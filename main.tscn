@@ -102,6 +102,10 @@ vertical = true
 layout_mode = 2
 text = "Actions"
 
+[node name="undo_list" type="ItemList" parent="BC_middle/BC_left/P_actions/BC"]
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="P_layers" type="Panel" parent="BC_middle/BC_left"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -380,6 +384,7 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg
 
 [connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
 [connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
+[connection signal="item_selected" from="BC_middle/BC_left/P_actions/BC/undo_list" to="." method="_on_undo_list_item_selected"]
 [connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_gui_input"]
 [connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_entered"]
 [connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_exited"]

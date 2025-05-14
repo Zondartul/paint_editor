@@ -8,7 +8,11 @@ var prev_pos = Vector2i(0,0);
 func _init(new_ctx:PaintContext):
 	context = new_ctx;
 
-func lmb_down(pos):	prev_pos = pos; placedot(pos); is_lmb_down = true;
+func lmb_down(pos):	
+	context.undo_manager.checkpoint("Pixel tool");
+	prev_pos = pos; 
+	placedot(pos); 
+	is_lmb_down = true;
 func lmb_up(pos):   is_lmb_down = false;
 
 func mouseMove(pos):

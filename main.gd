@@ -3,6 +3,7 @@ extends Control
 const script_paint_context = preload("PaintContext.gd")
 const script_paint_tool = preload("PaintTool.gd")
 const script_paint_canvas = preload("res://canvas.gd")
+const script_undo_manager = preload("res://UndoManager.gd")
 const script_tool_pixel = preload("tool_pixel.gd")
 const script_tool_fill = preload("tool_fill.gd")
 
@@ -16,6 +17,8 @@ var cur_file_path:String
 func _ready():
 	ctx = PaintContext.new();
 	ctx.canvas = n_img;
+	ctx.undo_manager = UndoManager.new(ctx);
+	ctx.undo_manager.undo_stack_changed.connect(_on_UndoManager_stack_changed);
 	apply_fix_sb_enter_means_next();
 	print("hi")
 
@@ -124,8 +127,10 @@ func _on_file_index_pressed(index: int) -> void:
 func _on_edit_index_pressed(index: int) -> void:
 	if index == 0: #Undo
 		print("Undo")
+		ctx.undo_manager.undo();
 	if index == 1: #Redo
 		print("Redo")
+		ctx.undo_manager.redo();
 	if index == 2: #Canvas size
 		print("Canvas size")
 
@@ -189,3 +194,19 @@ func _on_sb_enter_pressed(_text):
 	event_press_tab.action = "ui_focus_next"
 	event_press_tab.pressed = true
 	Input.parse_input_event(event_press_tab);
+
+func _on_UndoManager_stack_changed(stack:Array, head:int):
+	print("Stack changed:");
+	print_undo_manager_stack(stack, head);
+
+func print_undo_manager_stack(stack:Array, head:int):
+	for i in range(0, stack.size()):
+		var S = "";
+		if(i == head): S = S + "--> ";
+		else: S = S + "    ";
+		S = S + str(i)+": "+stack[i].name;
+		print(S);
+	for i in range(stack.size(), head):
+		print(str(i)+"    : ...");
+	if(head >= stack.size()):
+		print("--> "+str(head)+": ...");

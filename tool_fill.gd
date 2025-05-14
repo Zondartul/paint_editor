@@ -21,6 +21,7 @@ func _init(new_ctx:PaintContext):
 	
 
 func lmb_down(pos): 
+	context.undo_manager.checkpoint("Fill tool");
 	fill(pos, context.cur_color);
 	context.canvas.update_canvas.call();
 	print("tool_fill: filled at "+str(pos))

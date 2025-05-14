@@ -154,6 +154,24 @@ stretch_mode = 3
 script = ExtResource("3_h2yge")
 padding = 0
 
+[node name="Canvas_preview" type="TextureRect" parent="BC_middle/BC_center/Background"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -256.0
+offset_right = 256.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+stretch_mode = 3
+script = ExtResource("3_h2yge")
+padding = 0
+
 [node name="BC_right" type="BoxContainer" parent="BC_middle"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -213,7 +231,6 @@ text = "Wand Select"
 
 [node name="btnLine" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
-disabled = true
 text = "Line"
 
 [node name="P_inspector" type="Panel" parent="BC_middle/BC_right"]
@@ -388,6 +405,9 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg
 [connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_gui_input"]
 [connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_entered"]
 [connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_exited"]
+[connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas_preview" to="." method="_on_canvas_gui_input"]
+[connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas_preview" to="." method="_on_canvas_mouse_entered"]
+[connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas_preview" to="." method="_on_canvas_mouse_exited"]
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnClear" to="." method="_on_btn_clear_pressed"]
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnBrush" to="." method="_on_btn_brush_pressed"]
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnPixel" to="." method="_on_btn_pixel_pressed"]

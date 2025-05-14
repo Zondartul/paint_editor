@@ -6,9 +6,11 @@ const script_paint_canvas = preload("res://canvas.gd")
 const script_undo_manager = preload("res://UndoManager.gd")
 const script_tool_pixel = preload("tool_pixel.gd")
 const script_tool_fill = preload("tool_fill.gd")
+const script_tool_line = preload("tool_line.gd")
 
 var tool:PaintTool = null;
 @onready var n_img:PaintCanvas = $BC_middle/BC_center/Background/Canvas
+@onready var n_img2:PaintCanvas = $BC_middle/BC_center/Background/Canvas_preview
 @onready var lbl_status:Label = $BC_bottom/P/BC/lblStatus
 @onready var n_undo_list:ItemList = $BC_middle/BC_left/P_actions/BC/undo_list
 var ctx:PaintContext;
@@ -18,6 +20,7 @@ var cur_file_path:String
 func _ready():
 	ctx = PaintContext.new();
 	ctx.canvas = n_img;
+	ctx.canvas2 = n_img2;
 	ctx.undo_manager = UndoManager.new(ctx);
 	ctx.undo_manager.undo_stack_changed.connect(_on_UndoManager_stack_changed);
 	apply_fix_sb_enter_means_next();
@@ -43,7 +46,8 @@ func clear_image():
 
 func set_tool(tool_name):
 	if tool_name == "pixel":	tool = Tool_Pixel.new(ctx);
-	elif tool_name == "fill":		tool = Tool_Fill.new(ctx);
+	elif tool_name == "fill":	tool = Tool_Fill.new(ctx);
+	elif tool_name == "line":	tool = Tool_Line.new(ctx);
 	else:
 		print("unknown tool ["+tool_name+"]")
 		return;
@@ -137,18 +141,22 @@ func _on_edit_index_pressed(index: int) -> void:
 		print("Canvas size")
 
 func resize_canvas(new_size):
+	var BG = $BC_middle/BC_center/Background
 	resize_canvas_nodes(new_size); 
-	ctx.canvas.clear();
+	for canvas in BG.get_children():
+		canvas.clear();
 	canvas_restart();
 	resize_canvas_nodes(new_size); # too many side effects, got to fix it again!
 
 func resize_canvas_nodes(new_size):
-	$BC_middle/BC_center/Background.custom_minimum_size = new_size;
-	$BC_middle/BC_center/Background.size = new_size;
-	ctx.canvas.picture_size = new_size;
-	ctx.canvas.custom_minimum_size = new_size;
-	ctx.canvas.size = new_size;
-	ctx.canvas.position = Vector2i(0,0);
+	var BG = $BC_middle/BC_center/Background
+	BG.custom_minimum_size = new_size;
+	BG.size = new_size;
+	for canvas in BG.get_children():
+		canvas.picture_size = new_size;
+		canvas.custom_minimum_size = new_size;
+		canvas.size = new_size;
+		canvas.position = Vector2i(0,0);
 
 
 func new_file(settings):

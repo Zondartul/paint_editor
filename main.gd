@@ -7,6 +7,7 @@ const script_undo_manager = preload("res://UndoManager.gd")
 const script_tool_pixel = preload("tool_pixel.gd")
 const script_tool_fill = preload("tool_fill.gd")
 const script_tool_line = preload("tool_line.gd")
+const script_tool_selbox = preload("tool_sel_box.gd")
 
 var tool:PaintTool = null;
 @onready var n_img:PaintCanvas = $BC_middle/BC_center/Background/Canvas
@@ -48,6 +49,7 @@ func set_tool(tool_name):
 	if tool_name == "pixel":	tool = Tool_Pixel.new(ctx);
 	elif tool_name == "fill":	tool = Tool_Fill.new(ctx);
 	elif tool_name == "line":	tool = Tool_Line.new(ctx);
+	elif tool_name == "sel_box": tool = Tool_SelBox.new(ctx);
 	else:
 		print("unknown tool ["+tool_name+"]")
 		return;

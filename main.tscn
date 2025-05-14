@@ -221,7 +221,6 @@ text = "Eraser"
 
 [node name="btnSelBox" type="Button" parent="BC_middle/BC_right/P_tools/GC"]
 layout_mode = 2
-disabled = true
 text = "Box Select"
 
 [node name="btnSelWand" type="Button" parent="BC_middle/BC_right/P_tools/GC"]

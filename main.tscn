@@ -136,7 +136,8 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Canvas" type="TextureRect" parent="BC_middle/BC_center/Background"]
+[node name="Canvas_preview" type="TextureRect" parent="BC_middle/BC_center/Background"]
+z_index = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -154,7 +155,7 @@ stretch_mode = 3
 script = ExtResource("3_h2yge")
 padding = 0
 
-[node name="Canvas_preview" type="TextureRect" parent="BC_middle/BC_center/Background"]
+[node name="Canvas" type="TextureRect" parent="BC_middle/BC_center/Background"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -404,9 +405,6 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg
 [connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_gui_input"]
 [connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_entered"]
 [connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_exited"]
-[connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas_preview" to="." method="_on_canvas_gui_input"]
-[connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas_preview" to="." method="_on_canvas_mouse_entered"]
-[connection signal="mouse_exited" from="BC_middle/BC_center/Background/Canvas_preview" to="." method="_on_canvas_mouse_exited"]
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnClear" to="." method="_on_btn_clear_pressed"]
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnBrush" to="." method="_on_btn_brush_pressed"]
 [connection signal="pressed" from="BC_middle/BC_right/P_tools/GC/btnPixel" to="." method="_on_btn_pixel_pressed"]

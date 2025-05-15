@@ -53,7 +53,7 @@ func rmb_up(pos):
 	if is_something_selected:
 		context.undo_manager.action_begin("Paste selection");
 		var R = Rect2i(Vector2i(0,0), selected_region.get_size());
-		context.canvas.canvas_image.blit_rect(selected_region, R, region_pos);
+		context.canvas.canvas_image.blend_rect(selected_region, R, region_pos);
 		context.canvas.update_canvas.call();
 		is_something_selected = false;
 		context.canvas2.clear();

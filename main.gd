@@ -157,7 +157,9 @@ func resize_canvas_nodes(new_size):
 	for canvas in BG.get_children():
 		canvas.picture_size = new_size;
 		canvas.custom_minimum_size = new_size;
+		#print(canvas.name +": resizing "+str(new_size)+"...");
 		canvas.size = new_size;
+		#print(canvas.name + " resized to "+str(canvas.size))
 		canvas.position = Vector2i(0,0);
 
 
@@ -191,8 +193,13 @@ func _on_fd_open_file_selected(path: String) -> void:
 func OpenFile(path:String):
 	ctx.canvas.canvas_image.load(path);
 	var size = ctx.canvas.canvas_image.get_size();
-	ctx.canvas.picture_size = size;
-	ctx.canvas.update_canvas.call();
+	print("resize everything to "+str(size))
+	var BG = $BC_middle/BC_center/Background
+	for canvas in BG.get_children():
+		canvas.picture_size = size;
+		if(canvas != ctx.canvas):
+			canvas.clear();
+		canvas.update_canvas.call();
 	resize_canvas_nodes(size);
 	ctx.undo_manager.clear();
 	print("loaded file ["+path+"]")

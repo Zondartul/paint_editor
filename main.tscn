@@ -1,7 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://vywc4nki63f7"]
+[gd_scene load_steps=5 format=3 uid="uid://vywc4nki63f7"]
 
 [ext_resource type="Script" uid="uid://6jarapewd512" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="Shader" uid="uid://bcynabdmo65fs" path="res://grid.gdshader" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://b4v6uoirhvfve" path="res://canvas.gd" id="3_h2yge"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lquwl"]
+shader = ExtResource("3_1bvp3")
+shader_parameter/res_x = 512.0
+shader_parameter/res_y = 512.0
 
 [node name="Main" type="BoxContainer"]
 anchors_preset = 15
@@ -48,6 +54,18 @@ item_0/id = 0
 item_1/text = "Redo"
 item_1/id = 1
 item_2/text = "Canvas size..."
+item_2/id = 2
+
+[node name="View" type="PopupMenu" parent="BC_top/P/BC/MenuBar"]
+item_count = 3
+item_0/text = "Smooth pixels"
+item_0/checkable = 1
+item_0/checked = true
+item_0/id = 0
+item_1/text = "Show grid"
+item_1/checkable = 1
+item_1/id = 1
+item_2/text = "Background..."
 item_2/id = 2
 
 [node name="pad" type="Control" parent="BC_top/P/BC"]
@@ -182,6 +200,17 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+
+[node name="grid" type="ColorRect" parent="BC_middle/BC_center/Background"]
+visible = false
+z_index = 2
+material = SubResource("ShaderMaterial_lquwl")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Canvas_preview" type="TextureRect" parent="BC_middle/BC_center/Background"]
 z_index = 1
@@ -426,6 +455,7 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg
 
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
+[connection signal="index_pressed" from="BC_top/P/BC/MenuBar/View" to="." method="_on_view_index_pressed"]
 [connection signal="value_changed" from="BC_top/P/BC/P_zoom/BC/sb_zoom" to="." method="_on_sb_zoom_value_changed"]
 [connection signal="pressed" from="BC_top/P/BC/P_zoom/BC/btnZoomIn" to="." method="_on_btn_zoom_in_pressed"]
 [connection signal="pressed" from="BC_top/P/BC/P_zoom/BC/btnZoomOut" to="." method="_on_btn_zoom_out_pressed"]

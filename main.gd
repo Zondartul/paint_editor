@@ -78,6 +78,10 @@ func _on_canvas_gui_input(event: InputEvent) -> void:
 				canvas_rmb_down(event.position);
 			if event.button_index == MOUSE_BUTTON_MIDDLE:
 				canvas_mmb_down(event.position);
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				zoom_wheel_up(event.position);
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				zoom_wheel_down(event.position);
 		else:
 			if event.button_index == MOUSE_BUTTON_LEFT:
 				canvas_lmb_up(event.position);
@@ -260,6 +264,9 @@ var cur_zoom = 100;
 var zoom_db_steps = 3.0;
 var zoom_max = 10000; #percent
 var zoom_min = 10; #percent
+var zoom_anchor:Vector2;
+var zoom_prev_scale:Vector2;
+
 func zoom_val_next(val):
 	var db = zoom_db_steps*log(val)/log(10);
 	var new_db = round(db+1);
@@ -283,36 +290,44 @@ func write_zoom_widget():
 
 func _on_sb_zoom_value_changed(value: float) -> void:
 	print("zoom val changed");
+	zoom_anchor = get_screen_center_anchor();
 	read_zoom_widget();
 	apply_new_zoom();
 
 func _on_btn_zoom_in_pressed() -> void:
+	zoom_anchor = get_screen_center_anchor();
 	cur_zoom = zoom_val_next(cur_zoom);
 	write_zoom_widget();
 	apply_new_zoom();
 
 func _on_btn_zoom_out_pressed() -> void:
+	zoom_anchor = get_screen_center_anchor();
 	cur_zoom = zoom_val_prev(cur_zoom);
 	write_zoom_widget();
 	apply_new_zoom();
 
 
 func _on_btn_zoom_rst_pressed() -> void:
+	zoom_anchor = get_screen_center_anchor();
 	cur_zoom = 100;
 	write_zoom_widget();
 	apply_new_zoom();
 
 
 func _on_btn_zoom_fit_pressed() -> void:
+	zoom_anchor = get_screen_center_anchor();
 	cur_zoom = zoom_val_fit();
 	write_zoom_widget();
 	apply_new_zoom();
 
 func apply_new_zoom():
 	var new_scale = cur_zoom / 100.0; #convert from percent
+	zoom_prev_scale = n_background.scale;
 	n_background.scale = Vector2(new_scale, new_scale);
 	if(zoom_val_fit() >= cur_zoom):
 		recenter_bg();
+	else:
+		move_bg_to_anchor();
 
 func zoom_val_fit():
 	var n_bg_container:Control = $BC_middle/BC_center
@@ -332,5 +347,34 @@ func recenter_bg():
 	var diff = cont_center - bg_center;
 	#print("recenter by moving to "+str(diff))
 	n_background.position = diff;
-	var new_bg_center = n_background.position + (n_background.scale*n_background.size)/2.0;
+	#var new_bg_center = n_background.position + (n_background.scale*n_background.size)/2.0;
 	#print("cont center: "+str(cont_center)+", bg center: "+str(bg_center));
+
+func move_bg_to_anchor():
+	var prev_anchor_global = n_background.position + zoom_prev_scale * zoom_anchor;
+	var new_anchor_global = n_background.position + n_background.scale * zoom_anchor;
+	#print("scale: prev "+str(zoom_prev_scale)+", new "+str(n_background.scale))
+	#print("anchor: prev "+str(prev_anchor_global)+", new "+str(new_anchor_global));
+	var diff = prev_anchor_global - new_anchor_global;
+	n_background.position += diff;
+
+func get_screen_center_anchor():
+	var cont:Control = $BC_middle/BC_center;
+	var cont_center = cont.size/2.0;
+	var M1 = cont.get_global_transform();
+	var M2inv = n_background.get_global_transform().affine_inverse();
+	var offset_local = M2inv * M1 * cont_center;
+	return offset_local;
+
+func zoom_wheel_up(pos):
+	zoom_anchor = pos;
+	cur_zoom = zoom_val_next(cur_zoom);
+	write_zoom_widget();
+	apply_new_zoom();
+
+func zoom_wheel_down(pos):
+	zoom_anchor = pos;
+	cur_zoom = zoom_val_prev(cur_zoom);
+	write_zoom_widget();
+	apply_new_zoom();
+	

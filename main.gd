@@ -10,10 +10,12 @@ const script_tool_line = preload("tool_line.gd")
 const script_tool_selbox = preload("tool_sel_box.gd")
 
 var tool:PaintTool = null;
+@onready var n_background:ColorRect = $BC_middle/BC_center/Background
 @onready var n_img:PaintCanvas = $BC_middle/BC_center/Background/Canvas
 @onready var n_img2:PaintCanvas = $BC_middle/BC_center/Background/Canvas_preview
 @onready var lbl_status:Label = $BC_bottom/P/BC/lblStatus
 @onready var n_undo_list:ItemList = $BC_middle/BC_left/P_actions/BC/undo_list
+@onready var n_sb_zoom:SpinBox = $BC_top/P/BC/P_zoom/BC/sb_zoom
 var ctx:PaintContext;
 
 var cur_file_path:String
@@ -254,3 +256,81 @@ func _input(event:InputEvent)->void:
 		ctx.undo_manager.redo();
 		get_viewport().set_input_as_handled();
 		
+var cur_zoom = 100;
+var zoom_db_steps = 3.0;
+var zoom_max = 10000; #percent
+var zoom_min = 10; #percent
+func zoom_val_next(val):
+	var db = zoom_db_steps*log(val)/log(10);
+	var new_db = round(db+1);
+	var new_val = 10.0**(new_db/zoom_db_steps);
+	new_val = min(new_val, zoom_max);
+	return new_val;
+
+func zoom_val_prev(val):
+	var db = zoom_db_steps*log(val)/log(10);
+	var new_db = round(db-1);
+	var new_val = 10.0**(new_db/zoom_db_steps);
+	new_val = max(new_val, zoom_min);
+	return new_val;
+
+func read_zoom_widget():
+	cur_zoom = clamp(n_sb_zoom.value, zoom_min, zoom_max);
+	n_sb_zoom.value = cur_zoom;
+
+func write_zoom_widget():
+	n_sb_zoom.set_value_no_signal(cur_zoom);
+
+func _on_sb_zoom_value_changed(value: float) -> void:
+	print("zoom val changed");
+	read_zoom_widget();
+	apply_new_zoom();
+
+func _on_btn_zoom_in_pressed() -> void:
+	cur_zoom = zoom_val_next(cur_zoom);
+	write_zoom_widget();
+	apply_new_zoom();
+
+func _on_btn_zoom_out_pressed() -> void:
+	cur_zoom = zoom_val_prev(cur_zoom);
+	write_zoom_widget();
+	apply_new_zoom();
+
+
+func _on_btn_zoom_rst_pressed() -> void:
+	cur_zoom = 100;
+	write_zoom_widget();
+	apply_new_zoom();
+
+
+func _on_btn_zoom_fit_pressed() -> void:
+	cur_zoom = zoom_val_fit();
+	write_zoom_widget();
+	apply_new_zoom();
+
+func apply_new_zoom():
+	var new_scale = cur_zoom / 100.0; #convert from percent
+	n_background.scale = Vector2(new_scale, new_scale);
+	if(zoom_val_fit() >= cur_zoom):
+		recenter_bg();
+
+func zoom_val_fit():
+	var n_bg_container:Control = $BC_middle/BC_center
+	var ext_height:float = n_bg_container.size.y;
+	var ext_width:float = n_bg_container.size.x;
+	var int_height:float = n_background.size.y;
+	var int_width:float = n_background.size.x;
+	var ratio_y = ext_height / int_height; #int_height / ext_height;
+	var ratio_x = ext_width / int_width; #int_width / ext_width;
+	#print("dbg: zoom_val_fit: ratio_y "+str(ratio_y)+", ratio_x "+str(ratio_x));
+	var ratio = min(ratio_y, ratio_x) * 100.0; #convert to percentage
+	return ratio;
+
+func recenter_bg():
+	var bg_center = (n_background.scale*n_background.size)/2.0;
+	var cont_center = $BC_middle/BC_center.size/2.0;
+	var diff = cont_center - bg_center;
+	#print("recenter by moving to "+str(diff))
+	n_background.position = diff;
+	var new_bg_center = n_background.position + (n_background.scale*n_background.size)/2.0;
+	#print("cont center: "+str(cont_center)+", bg center: "+str(bg_center));

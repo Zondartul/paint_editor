@@ -16,26 +16,20 @@ script = ExtResource("1_0xm2m")
 
 [node name="BC_top" type="BoxContainer" parent="."]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="BC_top"]
+[node name="P" type="PanelContainer" parent="BC_top"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BC" type="BoxContainer" parent="BC_top/Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-vertical = true
-
-[node name="MenuBar" type="MenuBar" parent="BC_top/Panel/BC"]
+[node name="BC" type="BoxContainer" parent="BC_top/P"]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="File" type="PopupMenu" parent="BC_top/Panel/BC/MenuBar"]
+[node name="MenuBar" type="MenuBar" parent="BC_top/P/BC"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 2
+
+[node name="File" type="PopupMenu" parent="BC_top/P/BC/MenuBar"]
 item_count = 4
 item_0/text = "New..."
 item_0/id = 0
@@ -46,7 +40,7 @@ item_2/id = 2
 item_3/text = "Save As..."
 item_3/id = 3
 
-[node name="Edit" type="PopupMenu" parent="BC_top/Panel/BC/MenuBar"]
+[node name="Edit" type="PopupMenu" parent="BC_top/P/BC/MenuBar"]
 auto_translate_mode = 1
 item_count = 3
 item_0/text = "Undo"
@@ -56,10 +50,52 @@ item_1/id = 1
 item_2/text = "Canvas size..."
 item_2/id = 2
 
+[node name="pad" type="Control" parent="BC_top/P/BC"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="P_zoom" type="PanelContainer" parent="BC_top/P/BC"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="BC" type="BoxContainer" parent="BC_top/P/BC/P_zoom"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BC_top/P/BC/P_zoom/BC"]
+layout_mode = 2
+text = "Zoom"
+
+[node name="sb_zoom" type="SpinBox" parent="BC_top/P/BC/P_zoom/BC"]
+layout_mode = 2
+max_value = 1000.0
+step = 10.0
+value = 100.0
+allow_greater = true
+suffix = "%"
+
+[node name="btnZoomIn" type="Button" parent="BC_top/P/BC/P_zoom/BC"]
+layout_mode = 2
+text = "+"
+
+[node name="btnZoomOut" type="Button" parent="BC_top/P/BC/P_zoom/BC"]
+layout_mode = 2
+text = "-"
+
+[node name="btnZoomRst" type="Button" parent="BC_top/P/BC/P_zoom/BC"]
+layout_mode = 2
+text = "1:1"
+
+[node name="btnZoomFit" type="Button" parent="BC_top/P/BC/P_zoom/BC"]
+layout_mode = 2
+text = "Fit"
+
+[node name="pad2" type="Control" parent="BC_top/P/BC"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="BC_middle" type="BoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 10.0
 
 [node name="BC_left" type="BoxContainer" parent="BC_middle"]
 layout_mode = 2
@@ -124,17 +160,28 @@ vertical = true
 layout_mode = 2
 text = "Layers"
 
-[node name="BC_center" type="BoxContainer" parent="BC_middle"]
+[node name="BC_center" type="Control" parent="BC_middle"]
+clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
-alignment = 1
 
 [node name="Background" type="ColorRect" parent="BC_middle/BC_center"]
 custom_minimum_size = Vector2(512, 512)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -256.0
+offset_right = 256.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 
 [node name="Canvas_preview" type="TextureRect" parent="BC_middle/BC_center/Background"]
 z_index = 1
@@ -175,20 +222,13 @@ padding = 0
 
 [node name="BC_right" type="BoxContainer" parent="BC_middle"]
 layout_mode = 2
-size_flags_horizontal = 3
 vertical = true
 
-[node name="P_tools" type="Panel" parent="BC_middle/BC_right"]
+[node name="P_tools" type="PanelContainer" parent="BC_middle/BC_right"]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="GC" type="GridContainer" parent="BC_middle/BC_right/P_tools"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 columns = 2
 
 [node name="Label" type="Label" parent="BC_middle/BC_right/P_tools/GC"]
@@ -233,35 +273,25 @@ text = "Wand Select"
 layout_mode = 2
 text = "Line"
 
-[node name="P_inspector" type="Panel" parent="BC_middle/BC_right"]
+[node name="P_inspector" type="PanelContainer" parent="BC_middle/BC_right"]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="BC" type="BoxContainer" parent="BC_middle/BC_right/P_inspector"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 vertical = true
 
 [node name="Label" type="Label" parent="BC_middle/BC_right/P_inspector/BC"]
 layout_mode = 2
 text = "Tool settings"
 
-[node name="P_color" type="Panel" parent="BC_middle/BC_right"]
+[node name="P_color" type="PanelContainer" parent="BC_middle/BC_right"]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="BC" type="BoxContainer" parent="BC_middle/BC_right/P_color"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 vertical = true
 
 [node name="BoxContainer" type="BoxContainer" parent="BC_middle/BC_right/P_color/BC"]
@@ -300,19 +330,14 @@ presets_visible = false
 
 [node name="BC_bottom" type="BoxContainer" parent="."]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 8
 
-[node name="P" type="Panel" parent="BC_bottom"]
+[node name="P" type="PanelContainer" parent="BC_bottom"]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="BC" type="BoxContainer" parent="BC_bottom/P"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 
 [node name="lblStatus" type="Label" parent="BC_bottom/P/BC"]
 layout_mode = 2
@@ -399,8 +424,13 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg")
 
-[connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
-[connection signal="index_pressed" from="BC_top/Panel/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
+[connection signal="index_pressed" from="BC_top/P/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
+[connection signal="index_pressed" from="BC_top/P/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
+[connection signal="value_changed" from="BC_top/P/BC/P_zoom/BC/sb_zoom" to="." method="_on_sb_zoom_value_changed"]
+[connection signal="pressed" from="BC_top/P/BC/P_zoom/BC/btnZoomIn" to="." method="_on_btn_zoom_in_pressed"]
+[connection signal="pressed" from="BC_top/P/BC/P_zoom/BC/btnZoomOut" to="." method="_on_btn_zoom_out_pressed"]
+[connection signal="pressed" from="BC_top/P/BC/P_zoom/BC/btnZoomRst" to="." method="_on_btn_zoom_rst_pressed"]
+[connection signal="pressed" from="BC_top/P/BC/P_zoom/BC/btnZoomFit" to="." method="_on_btn_zoom_fit_pressed"]
 [connection signal="item_selected" from="BC_middle/BC_left/P_actions/BC/undo_list" to="." method="_on_undo_list_item_selected"]
 [connection signal="gui_input" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_gui_input"]
 [connection signal="mouse_entered" from="BC_middle/BC_center/Background/Canvas" to="." method="_on_canvas_mouse_entered"]

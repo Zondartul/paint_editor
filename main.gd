@@ -16,9 +16,11 @@ var tool:PaintTool = null;
 @onready var lbl_status:Label = $BC_bottom/P/BC/lblStatus
 @onready var n_undo_list:ItemList = $BC_middle/BC_left/P_actions/BC/undo_list
 @onready var n_sb_zoom:SpinBox = $BC_top/P/BC/P_zoom/BC/sb_zoom
+@onready var n_grid = $BC_middle/BC_center/Background/grid
 var ctx:PaintContext;
 
 var cur_file_path:String
+var image_size:Vector2i = Vector2i(512,512);
 
 func _ready():
 	ctx = PaintContext.new();
@@ -149,6 +151,7 @@ func _on_edit_index_pressed(index: int) -> void:
 		print("Canvas size")
 
 func resize_canvas(new_size):
+	image_size = new_size;
 	var BG = $BC_middle/BC_center/Background
 	resize_canvas_nodes(new_size); 
 	for canvas in BG.get_children():
@@ -200,13 +203,16 @@ func OpenFile(path:String):
 	ctx.canvas.canvas_image.load(path);
 	var size = ctx.canvas.canvas_image.get_size();
 	print("resize everything to "+str(size))
+	image_size = size;
 	var BG = $BC_middle/BC_center/Background
 	for canvas in BG.get_children():
 		canvas.picture_size = size;
 		if(canvas != ctx.canvas):
 			canvas.clear();
 		canvas.update_canvas.call();
+	resize_grid();
 	resize_canvas_nodes(size);
+	recenter_bg();
 	ctx.undo_manager.clear();
 	print("loaded file ["+path+"]")
 
@@ -324,6 +330,7 @@ func apply_new_zoom():
 	var new_scale = cur_zoom / 100.0; #convert from percent
 	zoom_prev_scale = n_background.scale;
 	n_background.scale = Vector2(new_scale, new_scale);
+	resize_grid();
 	if(zoom_val_fit() >= cur_zoom):
 		recenter_bg();
 	else:
@@ -377,4 +384,44 @@ func zoom_wheel_down(pos):
 	cur_zoom = zoom_val_prev(cur_zoom);
 	write_zoom_widget();
 	apply_new_zoom();
+	
+func _on_view_index_pressed(index: int) -> void:
+	var view_menu:PopupMenu = $BC_top/P/BC/MenuBar/View
+	if view_menu.is_item_checkable(index):
+		view_menu.set_item_checked(index, not view_menu.is_item_checked(index));
+	if index == 0: # Smooth pixels
+		if view_menu.is_item_checked(0):
+			set_smooth_pixels(true);
+		else:
+			set_smooth_pixels(false);
+	elif index == 1: # Show grid
+		if view_menu.is_item_checked(1):
+			n_grid.show();
+		else:
+			n_grid.hide();
+	elif index == 2: # Background...
+		$pop_background.show();
+
+func set_smooth_pixels(val):
+	for canvas in n_background.get_children():
+		if canvas is TextureRect:
+			if val:
+				canvas.texture_filter = CanvasItem.TEXTURE_FILTER_PARENT_NODE;
+			else:
+				canvas.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST;
+
+const min_grid_pixels = 16.0;
+const grid_resize_factor = 4;
+
+func resize_grid():
+	var new_grid_size = image_size;
+	var grid_cell_pixels = n_background.scale;
+	while(min(grid_cell_pixels.x, grid_cell_pixels.y) <= min_grid_pixels):
+		#print("grid_cell_pixels: "+str(grid_cell_pixels))
+		new_grid_size /= grid_resize_factor;
+		grid_cell_pixels *= grid_resize_factor;
+	var shader_mat:ShaderMaterial = n_grid.material;
+	shader_mat.set_shader_parameter("res_x", new_grid_size.x);
+	shader_mat.set_shader_parameter("res_y", new_grid_size.y);
+	#print("new grid resolution: "+str(new_grid_size));
 	

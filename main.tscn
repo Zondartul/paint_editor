@@ -16,6 +16,8 @@ shader_parameter/color2 = Color(0.7, 0.7, 0.7, 1)
 shader = ExtResource("3_1bvp3")
 shader_parameter/res_x = 512.0
 shader_parameter/res_y = 512.0
+shader_parameter/grid_scale = 1.0
+shader_parameter/pixel_scale = Vector2(1, 1)
 
 [node name="Main" type="BoxContainer"]
 anchors_preset = 15
@@ -532,7 +534,7 @@ layout_mode = 2
 text = "Ok"
 
 [node name="fd_select_image" type="FileDialog" parent="."]
-title = "Select Image"
+title = "Open a File"
 initial_position = 2
 ok_button_text = "Open"
 file_mode = 0

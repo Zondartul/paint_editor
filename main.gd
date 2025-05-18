@@ -37,6 +37,10 @@ func _ready():
 
 func _process(delta:float)->void:
 	update_status();
+	# shader hot reload (for debug)
+	#var shader_mat:ShaderMaterial = n_grid.material;
+	#shader_mat.shader = ResourceLoader.load("res://grid.gdshader", "", ResourceLoader.CACHE_MODE_REPLACE); #temp: hot load the shader
+
 
 func update_status():
 	var str_status = "Tool: " + get_cur_tool_str()
@@ -326,7 +330,6 @@ func _on_btn_zoom_rst_pressed() -> void:
 	write_zoom_widget();
 	apply_new_zoom();
 
-
 func _on_btn_zoom_fit_pressed() -> void:
 	zoom_anchor = get_screen_center_anchor();
 	cur_zoom = zoom_val_fit();
@@ -423,13 +426,17 @@ const grid_resize_factor = 4;
 func resize_grid():
 	var new_grid_size = image_size;
 	var grid_cell_pixels = n_background.scale;
+	var grid_scale = 1.0;
 	while(min(grid_cell_pixels.x, grid_cell_pixels.y) <= min_grid_pixels):
 		#print("grid_cell_pixels: "+str(grid_cell_pixels))
-		new_grid_size /= grid_resize_factor;
+		# new_grid_size /= grid_resize_factor;
 		grid_cell_pixels *= grid_resize_factor;
+		grid_scale *= grid_resize_factor;
 	var shader_mat:ShaderMaterial = n_grid.material;
 	shader_mat.set_shader_parameter("res_x", new_grid_size.x);
 	shader_mat.set_shader_parameter("res_y", new_grid_size.y);
+	shader_mat.set_shader_parameter("grid_scale", grid_scale);
+	shader_mat.set_shader_parameter("pixel_scale", n_background.scale);
 	#print("new grid resolution: "+str(new_grid_size));
 	
 #background settings

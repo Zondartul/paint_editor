@@ -30,7 +30,7 @@ func placedot(pos):
 	context.canvas.update_canvas.call();
 
 func placeline(prev_pos, pos):
-	context.canvas.brush_radius = Vector2i(1,1);
+	context.canvas.brush_radius = Vector2i(1.0,1.0);
 	context.canvas.brush_color = context.cur_color;
 	context.canvas.line.append(prev_pos);
 	context.canvas.line.append(pos);

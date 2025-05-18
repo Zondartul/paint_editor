@@ -9,6 +9,8 @@ const script_tool_fill = preload("tool_fill.gd")
 const script_tool_line = preload("tool_line.gd")
 const script_tool_selbox = preload("tool_sel_box.gd")
 
+const shader_checkerboard = preload("res://checkerboard.gdshader")
+
 var tool:PaintTool = null;
 @onready var n_background:ColorRect = $BC_middle/BC_center/Background
 @onready var n_img:PaintCanvas = $BC_middle/BC_center/Background/Canvas
@@ -425,3 +427,76 @@ func resize_grid():
 	shader_mat.set_shader_parameter("res_y", new_grid_size.y);
 	#print("new grid resolution: "+str(new_grid_size));
 	
+#background settings
+var bg_type = "";
+var bg_col1 = Color.WHITE
+var bg_col2 = Color.GRAY
+var bg_image = null;
+
+func set_background(type:String, col1:Color, col2:Color, img):
+	bg_type = type;
+	bg_col1 = col1;
+	bg_col2 = col2;
+	bg_image = img;
+	if type == "none":
+		n_background.hide()
+	elif type == "single_color":
+		n_background.material = null;
+		n_background.color = bg_col1;
+		n_background.show()
+	elif type == "checkerboard":
+		var mat = ShaderMaterial.new();
+		mat.shader = shader_checkerboard;
+		n_background.material = mat;
+		mat.set_shader_parameter("color1", col1);
+		mat.set_shader_parameter("color2", col2);
+		n_background.show()
+	elif type == "image":
+		n_background.material = bg_image;
+		n_background.show()
+	write_widget_background();
+	
+@onready var n_bg_type = $pop_background/BC/opt_background
+@onready var n_lbl_col1 = $pop_background/BC/grid/lbl_col1
+@onready var n_bg_col1 = $pop_background/BC/grid/cp_col1
+@onready var n_lbl_col2 = $pop_background/BC/grid/lbl_col2
+@onready var n_bg_col2 = $pop_background/BC/grid/cp_col2
+@onready var n_lbl_image = $pop_background/BC/grid/lbl_image
+@onready var n_bg_image = $pop_background/BC/grid/btn_image
+
+func read_widget_background():
+	bg_type = ["none", "single_color", "checkerboard", "image"][n_bg_type.selected]
+	bg_col1 = n_bg_col1.color;
+	bg_col2 = n_bg_col2.color;
+	bg_image = n_bg_image.texture_normal;
+	set_background(bg_type, bg_col1, bg_col2, bg_image);
+	
+func write_widget_background():
+	n_bg_type.select({"none":0, "single_color":1, "checkerboard":2, "image":3}[bg_type]);
+	n_bg_col1.color = bg_col1;
+	n_bg_col2.color = bg_col2;
+	n_bg_image.texture_normal = bg_image;
+	
+	var widget_visibility = {
+		"none":[0,0,0],
+		"single_color":[1,0,0],
+		"checkerboard":[1,1,0],
+		"image":[0,0,1]
+	};
+	var vis = widget_visibility[bg_type];
+	n_lbl_col1.visible = vis[0];
+	n_bg_col1.visible = vis[0];
+	n_lbl_col2.visible = vis[1];
+	n_bg_col2.visible = vis[1];
+	n_lbl_image.visible = vis[2];
+	n_bg_image.visible = vis[2];
+
+func _on_opt_background_item_selected(index: int) -> void:
+	read_widget_background();
+func _on_background_cp_col_1_color_changed(color: Color) -> void:
+	read_widget_background();
+func _on_cp_col_2_color_changed(color: Color) -> void:
+	read_widget_background();
+
+func _on_background_btn_image_pressed() -> void:
+	print("select image...")

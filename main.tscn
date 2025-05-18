@@ -1,8 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://vywc4nki63f7"]
+[gd_scene load_steps=8 format=3 uid="uid://vywc4nki63f7"]
 
 [ext_resource type="Script" uid="uid://6jarapewd512" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="Shader" uid="uid://cm1ykdxllelo4" path="res://checkerboard.gdshader" id="2_lquwl"]
 [ext_resource type="Shader" uid="uid://bcynabdmo65fs" path="res://grid.gdshader" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://b4v6uoirhvfve" path="res://canvas.gd" id="3_h2yge"]
+[ext_resource type="Texture2D" uid="uid://bpgfqem2w7bhw" path="res://icon.svg" id="4_1bvp3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
+shader = ExtResource("2_lquwl")
+shader_parameter/size = 25.0
+shader_parameter/color1 = Color(1, 1, 1, 1)
+shader_parameter/color2 = Color(0.7, 0.7, 0.7, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lquwl"]
 shader = ExtResource("3_1bvp3")
@@ -185,6 +193,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 
 [node name="Background" type="ColorRect" parent="BC_middle/BC_center"]
+material = SubResource("ShaderMaterial_7mycd")
 custom_minimum_size = Vector2(512, 512)
 layout_mode = 1
 anchors_preset = 8
@@ -453,6 +462,76 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg")
 
+[node name="pop_background" type="Popup" parent="."]
+initial_position = 2
+size = Vector2i(252, 215)
+visible = true
+
+[node name="BC" type="BoxContainer" parent="pop_background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+vertical = true
+
+[node name="Label" type="Label" parent="pop_background/BC"]
+layout_mode = 2
+text = "Background selection"
+
+[node name="opt_background" type="OptionButton" parent="pop_background/BC"]
+layout_mode = 2
+selected = 1
+item_count = 4
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "Single color"
+popup/item_1/id = 1
+popup/item_2/text = "Checkerboard"
+popup/item_2/id = 2
+popup/item_3/text = "Image"
+popup/item_3/id = 3
+
+[node name="grid" type="GridContainer" parent="pop_background/BC"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+
+[node name="lbl_col1" type="Label" parent="pop_background/BC/grid"]
+layout_mode = 2
+text = "Main color"
+
+[node name="cp_col1" type="ColorPickerButton" parent="pop_background/BC/grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="lbl_col2" type="Label" parent="pop_background/BC/grid"]
+layout_mode = 2
+text = "Secondary color"
+
+[node name="cp_col2" type="ColorPickerButton" parent="pop_background/BC/grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="lbl_image" type="Label" parent="pop_background/BC/grid"]
+layout_mode = 2
+text = "Image"
+
+[node name="btn_image" type="TextureButton" parent="pop_background/BC/grid"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture_normal = ExtResource("4_1bvp3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BC" type="BoxContainer" parent="pop_background/BC"]
+layout_mode = 2
+alignment = 1
+
+[node name="btnOK" type="Button" parent="pop_background/BC/BC"]
+layout_mode = 2
+text = "Ok"
+
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/View" to="." method="_on_view_index_pressed"]
@@ -481,3 +560,8 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg
 [connection signal="pressed" from="pop_new_file/BC/BC2/btnCancel" to="pop_new_file" method="hide"]
 [connection signal="file_selected" from="fd_save_as" to="." method="_on_fd_save_as_file_selected"]
 [connection signal="file_selected" from="fd_open" to="." method="_on_fd_open_file_selected"]
+[connection signal="item_selected" from="pop_background/BC/opt_background" to="." method="_on_opt_background_item_selected"]
+[connection signal="color_changed" from="pop_background/BC/grid/cp_col1" to="." method="_on_background_cp_col_1_color_changed"]
+[connection signal="color_changed" from="pop_background/BC/grid/cp_col2" to="." method="_on_cp_col_2_color_changed"]
+[connection signal="pressed" from="pop_background/BC/grid/btn_image" to="." method="_on_background_btn_image_pressed"]
+[connection signal="pressed" from="pop_background/BC/BC/btnOK" to="pop_background" method="hide"]

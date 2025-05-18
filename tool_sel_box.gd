@@ -35,11 +35,22 @@ func lmb_down(pos):
 		context.undo_manager.action_begin("Box select");
 	prev_pos = pos; 
 	is_lmb_down = true;
-	
+
+func normalize_rect(rect: Rect2i) -> Rect2i:
+	var normalized = rect
+	if rect.size.x < 0:
+		normalized.position.x += rect.size.x
+		normalized.size.x = -rect.size.x
+	if rect.size.y < 0:
+		normalized.position.y += rect.size.y
+		normalized.size.y = -rect.size.y
+	return normalized
+
 func lmb_up(pos:Vector2i):   
 	is_lmb_down = false;
 	if not is_something_selected:
 		var R = Rect2i(prev_pos, pos-prev_pos);
+		R = normalize_rect(R);
 		selected_region = context.canvas.canvas_image.get_region(R);
 		region_pos = R.position;
 		context.canvas2.canvas_image.blit_rect(context.canvas.canvas_image, R, region_pos);
@@ -53,6 +64,7 @@ func rmb_up(pos):
 	if is_something_selected:
 		context.undo_manager.action_begin("Paste selection");
 		var R = Rect2i(Vector2i(0,0), selected_region.get_size());
+		R = normalize_rect(R);
 		context.canvas.canvas_image.blend_rect(selected_region, R, region_pos);
 		context.canvas.update_canvas.call();
 		is_something_selected = false;
@@ -77,24 +89,10 @@ func mouseMove(pos:Vector2i):
 			preview_box(R_moved);
 			context.canvas2.canvas_image.blit_rect(selected_region, R, region_pos);
 			context.canvas2.update_canvas.call();
-			
-	
-func placedot(pos):
-	#context.canvas.brush_radius = Vector2i(1,1);
-	#context.canvas.draw_dot.call(pos);
-	context.canvas.canvas_image.set_pixel(pos.x, pos.y, context.cur_color)
-	context.canvas.update_canvas.call();
-
-func placeline(prev_pos, pos):
-	context.canvas.brush_radius = Vector2i(1,1);
-	context.canvas.brush_color = context.cur_color;
-	context.canvas.line.append(prev_pos);
-	context.canvas.line.append(pos);
-	context.canvas.draw_line.call();
 
 func preview_line(prev_pos, pos):
 	context.canvas2.brush_radius = Vector2i(1,1);
-	context.canvas2.brush_color = context.cur_color;
+	context.canvas2.brush_color = Color.BLACK; #context.cur_color;
 	context.canvas2.line.append(prev_pos);
 	context.canvas2.line.append(pos);
 	context.canvas2.draw_line.call();

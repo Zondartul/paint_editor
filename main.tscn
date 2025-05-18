@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://cm1ykdxllelo4" path="res://checkerboard.gdshader" id="2_lquwl"]
 [ext_resource type="Shader" uid="uid://bcynabdmo65fs" path="res://grid.gdshader" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://b4v6uoirhvfve" path="res://canvas.gd" id="3_h2yge"]
-[ext_resource type="Texture2D" uid="uid://bpgfqem2w7bhw" path="res://icon.svg" id="4_1bvp3"]
+[ext_resource type="Texture2D" uid="uid://cw8j2ny1vmyp2" path="res://data/wizardtower.png" id="5_lquwl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
 shader = ExtResource("2_lquwl")
@@ -465,7 +465,6 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg
 [node name="pop_background" type="Popup" parent="."]
 initial_position = 2
 size = Vector2i(252, 215)
-visible = true
 
 [node name="BC" type="BoxContainer" parent="pop_background"]
 anchors_preset = 15
@@ -520,7 +519,7 @@ text = "Image"
 [node name="btn_image" type="TextureButton" parent="pop_background/BC/grid"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-texture_normal = ExtResource("4_1bvp3")
+texture_normal = ExtResource("5_lquwl")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -531,6 +530,14 @@ alignment = 1
 [node name="btnOK" type="Button" parent="pop_background/BC/BC"]
 layout_mode = 2
 text = "Ok"
+
+[node name="fd_select_image" type="FileDialog" parent="."]
+title = "Select Image"
+initial_position = 2
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg")
 
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/File" to="." method="_on_file_index_pressed"]
 [connection signal="index_pressed" from="BC_top/P/BC/MenuBar/Edit" to="." method="_on_edit_index_pressed"]
@@ -565,3 +572,4 @@ text = "Ok"
 [connection signal="color_changed" from="pop_background/BC/grid/cp_col2" to="." method="_on_cp_col_2_color_changed"]
 [connection signal="pressed" from="pop_background/BC/grid/btn_image" to="." method="_on_background_btn_image_pressed"]
 [connection signal="pressed" from="pop_background/BC/BC/btnOK" to="pop_background" method="hide"]
+[connection signal="file_selected" from="fd_select_image" to="." method="_on_fd_select_image_file_selected"]

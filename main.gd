@@ -10,6 +10,7 @@ const script_tool_line = preload("tool_line.gd")
 const script_tool_selbox = preload("tool_sel_box.gd")
 
 const shader_checkerboard = preload("res://checkerboard.gdshader")
+const shader_texture = preload("res://simple_texture.gdshader")
 
 var tool:PaintTool = null;
 @onready var n_background:ColorRect = $BC_middle/BC_center/Background
@@ -31,6 +32,7 @@ func _ready():
 	ctx.undo_manager = UndoManager.new(ctx);
 	ctx.undo_manager.undo_stack_changed.connect(_on_UndoManager_stack_changed);
 	apply_fix_sb_enter_means_next();
+	set_background("checkerboard", Color.WHITE, Color.LIGHT_GRAY, load("res://data/wizardtower.png"));
 	print("hi")
 
 func _process(delta:float)->void:
@@ -157,7 +159,8 @@ func resize_canvas(new_size):
 	var BG = $BC_middle/BC_center/Background
 	resize_canvas_nodes(new_size); 
 	for canvas in BG.get_children():
-		canvas.clear();
+		if canvas is PaintCanvas:
+			canvas.clear();
 	canvas_restart();
 	resize_canvas_nodes(new_size); # too many side effects, got to fix it again!
 
@@ -166,16 +169,18 @@ func resize_canvas_nodes(new_size):
 	BG.custom_minimum_size = new_size;
 	BG.size = new_size;
 	for canvas in BG.get_children():
-		canvas.picture_size = new_size;
-		canvas.custom_minimum_size = new_size;
-		#print(canvas.name +": resizing "+str(new_size)+"...");
-		canvas.size = new_size;
-		#print(canvas.name + " resized to "+str(canvas.size))
-		canvas.position = Vector2i(0,0);
+		if canvas is TextureRect:
+			canvas.picture_size = new_size;
+			canvas.custom_minimum_size = new_size;
+			#print(canvas.name +": resizing "+str(new_size)+"...");
+			canvas.size = new_size;
+			#print(canvas.name + " resized to "+str(canvas.size))
+			canvas.position = Vector2i(0,0);
 
 
 func new_file(settings):
 	resize_canvas(settings.size);
+	recenter_bg();
 	ctx.undo_manager.clear();
 
 func _on_pop_new_file_btn_accept_pressed() -> void:
@@ -452,7 +457,10 @@ func set_background(type:String, col1:Color, col2:Color, img):
 		mat.set_shader_parameter("color2", col2);
 		n_background.show()
 	elif type == "image":
-		n_background.material = bg_image;
+		var mat = ShaderMaterial.new();
+		mat.shader = shader_texture;
+		n_background.material = mat;
+		mat.set_shader_parameter("texture_albedo", bg_image);
 		n_background.show()
 	write_widget_background();
 	
@@ -491,12 +499,16 @@ func write_widget_background():
 	n_lbl_image.visible = vis[2];
 	n_bg_image.visible = vis[2];
 
-func _on_opt_background_item_selected(index: int) -> void:
+func _on_opt_background_item_selected(_index: int) -> void:
 	read_widget_background();
-func _on_background_cp_col_1_color_changed(color: Color) -> void:
+func _on_background_cp_col_1_color_changed(_color: Color) -> void:
 	read_widget_background();
-func _on_cp_col_2_color_changed(color: Color) -> void:
+func _on_cp_col_2_color_changed(_color: Color) -> void:
 	read_widget_background();
 
 func _on_background_btn_image_pressed() -> void:
-	print("select image...")
+	$fd_select_image.show();
+
+func _on_fd_select_image_file_selected(path: String) -> void:
+	n_bg_image.texture_normal = load(path);
+	read_widget_background();

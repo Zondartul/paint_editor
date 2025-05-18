@@ -32,6 +32,7 @@ func _ready():
 	ctx.undo_manager = UndoManager.new(ctx);
 	ctx.undo_manager.undo_stack_changed.connect(_on_UndoManager_stack_changed);
 	apply_fix_sb_enter_means_next();
+	init_background();
 	set_background("checkerboard", Color.WHITE, Color.LIGHT_GRAY, load("res://data/wizardtower.png"));
 	print("hi")
 
@@ -444,6 +445,14 @@ var bg_type = "";
 var bg_col1 = Color.WHITE
 var bg_col2 = Color.GRAY
 var bg_image = null;
+var bg_mat_checkerboard;
+var bg_mat_texture;
+
+func init_background():
+	bg_mat_checkerboard = ShaderMaterial.new();
+	bg_mat_checkerboard.shader = shader_checkerboard;
+	bg_mat_texture = ShaderMaterial.new();
+	bg_mat_texture.shader = shader_texture;
 
 func set_background(type:String, col1:Color, col2:Color, img):
 	bg_type = type;
@@ -451,24 +460,18 @@ func set_background(type:String, col1:Color, col2:Color, img):
 	bg_col2 = col2;
 	bg_image = img;
 	if type == "none":
-		n_background.hide()
+		n_background.material = null;
+		n_background.color = Color.TRANSPARENT;
 	elif type == "single_color":
 		n_background.material = null;
 		n_background.color = bg_col1;
-		n_background.show()
 	elif type == "checkerboard":
-		var mat = ShaderMaterial.new();
-		mat.shader = shader_checkerboard;
-		n_background.material = mat;
-		mat.set_shader_parameter("color1", col1);
-		mat.set_shader_parameter("color2", col2);
-		n_background.show()
+		n_background.material = bg_mat_checkerboard;
+		bg_mat_checkerboard.set_shader_parameter("color1", col1);
+		bg_mat_checkerboard.set_shader_parameter("color2", col2);
 	elif type == "image":
-		var mat = ShaderMaterial.new();
-		mat.shader = shader_texture;
-		n_background.material = mat;
-		mat.set_shader_parameter("texture_albedo", bg_image);
-		n_background.show()
+		n_background.material = bg_mat_texture;
+		bg_mat_texture.set_shader_parameter("texture_albedo", bg_image);
 	write_widget_background();
 	
 @onready var n_bg_type = $pop_background/BC/opt_background

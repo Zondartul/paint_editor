@@ -25,7 +25,7 @@ var line : PackedVector2Array
 @warning_ignore("shadowed_variable_base_class")
 var draw_dot : Callable = func(position:Vector2i) -> void:
 	canvas_image.fill_rect(
-		Rect2i(position - brush_radius, brush_radius*2),
+		Rect2i(position, brush_radius),
 		brush_color
 	)
 var draw_line : Callable = func() -> void:

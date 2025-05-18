@@ -9,6 +9,9 @@ const script_tool_fill = preload("tool_fill.gd")
 const script_tool_line = preload("tool_line.gd")
 const script_tool_selbox = preload("tool_sel_box.gd")
 
+const shader_checkerboard = preload("res://checkerboard.gdshader")
+const shader_texture = preload("res://simple_texture.gdshader")
+
 var tool:PaintTool = null;
 @onready var n_background:ColorRect = $BC_middle/BC_center/Background
 @onready var n_img:PaintCanvas = $BC_middle/BC_center/Background/Canvas
@@ -29,10 +32,16 @@ func _ready():
 	ctx.undo_manager = UndoManager.new(ctx);
 	ctx.undo_manager.undo_stack_changed.connect(_on_UndoManager_stack_changed);
 	apply_fix_sb_enter_means_next();
+	init_background();
+	set_background("checkerboard", Color.WHITE, Color.LIGHT_GRAY, load("res://data/wizardtower.png"));
 	print("hi")
 
 func _process(delta:float)->void:
 	update_status();
+	# shader hot reload (for debug)
+	#var shader_mat:ShaderMaterial = n_grid.material;
+	#shader_mat.shader = ResourceLoader.load("res://grid.gdshader", "", ResourceLoader.CACHE_MODE_REPLACE); #temp: hot load the shader
+
 
 func update_status():
 	var str_status = "Tool: " + get_cur_tool_str()
@@ -155,7 +164,8 @@ func resize_canvas(new_size):
 	var BG = $BC_middle/BC_center/Background
 	resize_canvas_nodes(new_size); 
 	for canvas in BG.get_children():
-		canvas.clear();
+		if canvas is PaintCanvas:
+			canvas.clear();
 	canvas_restart();
 	resize_canvas_nodes(new_size); # too many side effects, got to fix it again!
 
@@ -164,16 +174,18 @@ func resize_canvas_nodes(new_size):
 	BG.custom_minimum_size = new_size;
 	BG.size = new_size;
 	for canvas in BG.get_children():
-		canvas.picture_size = new_size;
-		canvas.custom_minimum_size = new_size;
-		#print(canvas.name +": resizing "+str(new_size)+"...");
-		canvas.size = new_size;
-		#print(canvas.name + " resized to "+str(canvas.size))
-		canvas.position = Vector2i(0,0);
+		if canvas is TextureRect:
+			canvas.picture_size = new_size;
+			canvas.custom_minimum_size = new_size;
+			#print(canvas.name +": resizing "+str(new_size)+"...");
+			canvas.size = new_size;
+			#print(canvas.name + " resized to "+str(canvas.size))
+			canvas.position = Vector2i(0,0);
 
 
 func new_file(settings):
 	resize_canvas(settings.size);
+	recenter_bg();
 	ctx.undo_manager.clear();
 
 func _on_pop_new_file_btn_accept_pressed() -> void:
@@ -319,7 +331,6 @@ func _on_btn_zoom_rst_pressed() -> void:
 	write_zoom_widget();
 	apply_new_zoom();
 
-
 func _on_btn_zoom_fit_pressed() -> void:
 	zoom_anchor = get_screen_center_anchor();
 	cur_zoom = zoom_val_fit();
@@ -416,12 +427,98 @@ const grid_resize_factor = 4;
 func resize_grid():
 	var new_grid_size = image_size;
 	var grid_cell_pixels = n_background.scale;
+	var grid_scale = 1.0;
 	while(min(grid_cell_pixels.x, grid_cell_pixels.y) <= min_grid_pixels):
 		#print("grid_cell_pixels: "+str(grid_cell_pixels))
-		new_grid_size /= grid_resize_factor;
+		# new_grid_size /= grid_resize_factor;
 		grid_cell_pixels *= grid_resize_factor;
+		grid_scale *= grid_resize_factor;
 	var shader_mat:ShaderMaterial = n_grid.material;
 	shader_mat.set_shader_parameter("res_x", new_grid_size.x);
 	shader_mat.set_shader_parameter("res_y", new_grid_size.y);
+	shader_mat.set_shader_parameter("grid_scale", grid_scale);
+	shader_mat.set_shader_parameter("pixel_scale", n_background.scale);
 	#print("new grid resolution: "+str(new_grid_size));
 	
+#background settings
+var bg_type = "";
+var bg_col1 = Color.WHITE
+var bg_col2 = Color.GRAY
+var bg_image = null;
+var bg_mat_checkerboard;
+var bg_mat_texture;
+
+func init_background():
+	bg_mat_checkerboard = ShaderMaterial.new();
+	bg_mat_checkerboard.shader = shader_checkerboard;
+	bg_mat_texture = ShaderMaterial.new();
+	bg_mat_texture.shader = shader_texture;
+
+func set_background(type:String, col1:Color, col2:Color, img):
+	bg_type = type;
+	bg_col1 = col1;
+	bg_col2 = col2;
+	bg_image = img;
+	if type == "none":
+		n_background.material = null;
+		n_background.color = Color.TRANSPARENT;
+	elif type == "single_color":
+		n_background.material = null;
+		n_background.color = bg_col1;
+	elif type == "checkerboard":
+		n_background.material = bg_mat_checkerboard;
+		bg_mat_checkerboard.set_shader_parameter("color1", col1);
+		bg_mat_checkerboard.set_shader_parameter("color2", col2);
+	elif type == "image":
+		n_background.material = bg_mat_texture;
+		bg_mat_texture.set_shader_parameter("texture_albedo", bg_image);
+	write_widget_background();
+	
+@onready var n_bg_type = $pop_background/BC/opt_background
+@onready var n_lbl_col1 = $pop_background/BC/grid/lbl_col1
+@onready var n_bg_col1 = $pop_background/BC/grid/cp_col1
+@onready var n_lbl_col2 = $pop_background/BC/grid/lbl_col2
+@onready var n_bg_col2 = $pop_background/BC/grid/cp_col2
+@onready var n_lbl_image = $pop_background/BC/grid/lbl_image
+@onready var n_bg_image = $pop_background/BC/grid/btn_image
+
+func read_widget_background():
+	bg_type = ["none", "single_color", "checkerboard", "image"][n_bg_type.selected]
+	bg_col1 = n_bg_col1.color;
+	bg_col2 = n_bg_col2.color;
+	bg_image = n_bg_image.texture_normal;
+	set_background(bg_type, bg_col1, bg_col2, bg_image);
+	
+func write_widget_background():
+	n_bg_type.select({"none":0, "single_color":1, "checkerboard":2, "image":3}[bg_type]);
+	n_bg_col1.color = bg_col1;
+	n_bg_col2.color = bg_col2;
+	n_bg_image.texture_normal = bg_image;
+	
+	var widget_visibility = {
+		"none":[0,0,0],
+		"single_color":[1,0,0],
+		"checkerboard":[1,1,0],
+		"image":[0,0,1]
+	};
+	var vis = widget_visibility[bg_type];
+	n_lbl_col1.visible = vis[0];
+	n_bg_col1.visible = vis[0];
+	n_lbl_col2.visible = vis[1];
+	n_bg_col2.visible = vis[1];
+	n_lbl_image.visible = vis[2];
+	n_bg_image.visible = vis[2];
+
+func _on_opt_background_item_selected(_index: int) -> void:
+	read_widget_background();
+func _on_background_cp_col_1_color_changed(_color: Color) -> void:
+	read_widget_background();
+func _on_cp_col_2_color_changed(_color: Color) -> void:
+	read_widget_background();
+
+func _on_background_btn_image_pressed() -> void:
+	$fd_select_image.show();
+
+func _on_fd_select_image_file_selected(path: String) -> void:
+	n_bg_image.texture_normal = load(path);
+	read_widget_background();

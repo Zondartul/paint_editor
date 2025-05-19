@@ -520,5 +520,18 @@ func _on_background_btn_image_pressed() -> void:
 	$fd_select_image.show();
 
 func _on_fd_select_image_file_selected(path: String) -> void:
-	n_bg_image.texture_normal = load(path);
-	read_widget_background();
+	var img = Image.new()
+	var err:Error = img.load(path);
+	if err == OK:
+		n_bg_image.texture_normal = ImageTexture.create_from_image(img);
+		read_widget_background();
+	else:
+		show_error("Could not load image: "+error_string(err))
+
+func show_error(message: String):
+	var alert = AcceptDialog.new()
+	alert.dialog_text = message
+	alert.title = "Error"
+	alert.connect("confirmed", alert.queue_free)
+	get_tree().root.add_child(alert)
+	alert.popup_centered()

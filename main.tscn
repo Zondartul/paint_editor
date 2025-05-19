@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://cm1ykdxllelo4" path="res://checkerboard.gdshader" id="2_lquwl"]
 [ext_resource type="Shader" uid="uid://bcynabdmo65fs" path="res://grid.gdshader" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://b4v6uoirhvfve" path="res://canvas.gd" id="3_h2yge"]
-[ext_resource type="Texture2D" uid="uid://cw8j2ny1vmyp2" path="res://data/wizardtower.png" id="5_lquwl"]
+[ext_resource type="Texture2D" uid="uid://bnl6bf1mbf55y" path="res://data/wizardtower.png" id="5_lquwl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
 shader = ExtResource("2_lquwl")

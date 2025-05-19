@@ -17,3 +17,6 @@ mono_crash.*.json
 
 # Temporary data
 data/
+
+# Releases
+bin/

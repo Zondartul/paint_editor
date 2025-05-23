@@ -1,7 +1,7 @@
-#Zondartul's Shitty Paint
+# Zondartul's Shitty Paint
 Part of (upcoming) Godot Game SDK
 
-##Features:
+## Features:
 - pixels
 - very small grids
 - infinite undo
